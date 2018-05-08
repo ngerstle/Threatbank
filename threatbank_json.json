@@ -1,0 +1,198 @@
+[
+  {
+    "Category": "Spoofing",
+    "Title": "Default credentials are used",
+    "Description": "Your system ships with default admin password and doesn't force a change",
+    "Remediation": "Set a secure password using NIST Guideline",
+    "Severity": "High"
+  },
+  {
+    "Category": "Spoofing",
+    "Title": "Client credentials are compromised",
+    "Description": "An attacker can steal credentials stored on the client and reuse them",
+    "Remediation": "Ensure client side data is encrypted",
+    "Severity": "Medium"
+  },
+  {
+    "Category": "Spoofing",
+    "Title": "Account hijacking",
+    "Description": "An attacker could go after the way credentials are updated or recovered",
+    "Remediation": "Implement controls in depth for how account credentials are updated",
+    "Severity": "Medium"
+  },
+  {
+    "Category": "Spoofing",
+    "Title": "Allowing weak encryption",
+    "Description": "An attacker could choose to use weaker or no authentication",
+    "Remediation": "Enforce strong encryption standard on the server",
+    "Severity": "Low"
+  },
+  {
+    "Category": "Spoofing",
+    "Title": "Server credentials are compromised",
+    "Description": "An attacker could steal credentials stored on the server and reuse them. For example a key is stored in a world readable file.",
+    "Remediation": "Enable encryption at rest. Store secrets encrypted. Store secrets in an elevated",
+    "Severity": "Low"
+  },
+  {
+    "Category": "Spoofing",
+    "Title": "Brute force credentials",
+    "Description": "An attacker can try one credential after another and there's nothing to slow them down",
+    "Remediation": "Implement rate limiting, 2FA or capta",
+    "Severity": "Medium"
+  },
+  {
+    "Category": "Tampering",
+    "Title": "Encryption key is compromised",
+    "Description": "Attacker compromises your custom key exchange or integry control which you built",
+    "Remediation": "Adopt a stand crypto",
+    "Severity": "Low"
+  },
+  {
+    "Category": "Tampering",
+    "Title": "Invalid log integrity",
+    "Description": "Attacker can replay data without detection because your code doesn't provide timestamps or sequence numbers",
+    "Remediation": "Implement event logging with timestamp or sequence numbering",
+    "Severity": "Low"
+  },
+  {
+    "Category": "Tampering",
+    "Title": "Control state information",
+    "Description": "Attacker can provide or control state information",
+    "Remediation": "Implement state flows on the backend and never trust client data",
+    "Severity": "High"
+  },
+  {
+    "Category": "Tampering",
+    "Title": "World writable files",
+    "Description": "Attacker can write to some resource because permissions are granted to the world or no ACLs",
+    "Remediation": "Adopt least privilege",
+    "Severity": "Medium"
+  },
+  {
+    "Category": "Repudiation",
+    "Title": "No logging",
+    "Description": "An attacker can say \"I didn't do that\" and you would have no way to prove them wrong",
+    "Remediation": "Enabling secure logging",
+    "Severity": "High"
+  },
+  {
+    "Category": "Repudiation",
+    "Title": "World editable log files",
+    "Description": "An attacker can edit logs",
+    "Remediation": "Port logs to another system. Prevent users from writing to log files.",
+    "Severity": "High"
+  },
+  {
+    "Category": "Repudiation",
+    "Title": "Insufficient log storage",
+    "Description": "An attacker can make logs wrap around and lose data.",
+    "Remediation": "Ensure there is enough space to store log files",
+    "Severity": "Medium"
+  },
+  {
+    "Category": "Information Disclosure",
+    "Title": "No encryption in transit",
+    "Description": "An attacker can read external network information because there's no cryptophy used. (HTTP, SMTP, FTP etc.)",
+    "Remediation": "TLS adoption for externally facing endpoints",
+    "Severity": "High"
+  },
+  {
+    "Category": "Information Disclosure",
+    "Title": "Misconfigured security groups or policies",
+    "Description": "An attacker can read information in files with no ACLs or weak policies. IE. Public S3 buckets or databases",
+    "Remediation": "Audit policies and implement least privilege",
+    "Severity": "High"
+  },
+  {
+    "Category": "Information Disclosure",
+    "Title": "Leakage of private system or company information",
+    "Description": "An attacker can access information through a search indexer, logger, or unfiltered error messages.",
+    "Remediation": "Penetration testing, audit public search engines",
+    "Severity": "Low"
+  },
+  {
+    "Category": "Information Disclosure",
+    "Title": "HTTP cookie not set to \"secure\"",
+    "Description": "An attacker can read data because the HTTP cookie isn't encrypted.",
+    "Remediation": "Set the \"secure\" flag for the HTTP cookie",
+    "Severity": "Low"
+  },
+  {
+    "Category": "Denial of Service",
+    "Title": "DDOS amplification 100:1",
+    "Description": "An attacker can amplify a DOS attack through this component with amplification on the order of 100:1. IE 1 request = 100",
+    "Remediation": "Rate limiting, understanding the system's architecture",
+    "Severity": "High"
+  },
+  {
+    "Category": "Denial of Service",
+    "Title": "DDOS amplification 10:1",
+    "Description": "An attacker can amplify a DOS attack through this component with amplification on the order of 10:1. IE 1 request = 100",
+    "Remediation": "Rate limiting, understanding the system's architecture",
+    "Severity": "Medium"
+  },
+  {
+    "Category": "Denial of Service",
+    "Title": "Logging system dies",
+    "Description": "An attacker can cause the logging subsystem to stop working",
+    "Remediation": "Port logs to another system or logging cluster",
+    "Severity": "Medium"
+  },
+  {
+    "Category": "Elevation of Privilege",
+    "Title": "Elevated privileges are used for running services",
+    "Description": "An attacker can inject a command that the system will run at a higher privilege level",
+    "Remediation": "Run services with a non root user",
+    "Severity": "High"
+  },
+  {
+    "Category": "Elevation of Privilege",
+    "Title": "Malicious input from client",
+    "Description": "A user can reflect input back to a user, like cross-site scripting",
+    "Remediation": "Sanitize/encode all user input, or adopt a web framework that has Auto-Escaping Template System",
+    "Severity": "High"
+  },
+  {
+    "Category": "Elevation of Privilege",
+    "Title": "Injection",
+    "Description": "An attacker can enter data that is checked while still under the attacker's control and used later on the other side of a trust boundary",
+    "Remediation": "Never trust user input and always perform server side checks",
+    "Severity": "High"
+  },
+  {
+    "Category": "Miscellaneous",
+    "Title": "Stolen cookies",
+    "Description": "Attacker embeds malicious javascript that can read your cookie because the HTTPOnly cookie flag is not set",
+    "Remediation": "Enable HTTPOnly cookie flag",
+    "Severity": "Low"
+  },
+  {
+    "Category": "Miscellaneous",
+    "Title": "XSS Vulnerability",
+    "Description": "Attacker is able to exploit a Cross Site Scripting (XSS) Vulnerability by inputting malicious code",
+    "Remediation": "Validate user input. Implement Content Security Policy (CSP) header",
+    "Severity": "Low"
+  },
+  {
+    "Category": "Miscellaneous",
+    "Title": "Use of vulnerable protocols",
+    "Description": "Attacker is able to downgrade a protocol",
+    "Remediation": "Adapt HSTS (Strict-Transport-Security)",
+    "Severity": "Low"
+  },
+  {
+    "Category": "Miscellaneous",
+    "Title": "Public s3 buckets",
+    "Description": "An attacker is able to view sensitive data",
+    "Remediation": "Configure least privilege model with regards to policies on AWS resources",
+    "Severity": "High"
+  },
+  {
+    "Category": "Miscellaneous",
+    "Title": "2FA not enabled",
+    "Description": "Attacker is able to compromise an account because 2FA is not enabled",
+    "Remediation": "Enable 2FA on IAM",
+    "Severity": "Medium"
+  }
+]
