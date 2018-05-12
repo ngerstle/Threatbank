@@ -17,8 +17,11 @@ init =
         threats =
             loadThreats "data"
 
+        iviewmodel =
+            ViewModel ""
+
         imodel =
-            Model threats "initial model, predataload"
+            Model threats "initial model, predataload" iviewmodel
     in
     ( imodel, getJsonData )
 
@@ -61,17 +64,6 @@ validateModel m =
 -- could add which threats are invalid and why
 
 
-getSubThreat : Model -> ThreatFieldId -> Maybe Threat
-getSubThreat model threatfieldid =
-    {- Gets a threat based on an EditField event -}
-    let
-        --(id,_) = ef
-        threats =
-            List.filter (\x -> x.id == threatfieldid.id) model.threats
-    in
-    List.head threats
-
-
 updateSubThreat : Model -> Result ( Threat, String ) Threat -> Model
 updateSubThreat model threatresult =
     {- Replaces an existing Threat with an updated Threat -}
@@ -93,21 +85,19 @@ updateSubThreat model threatresult =
     { model | threats = newthreats, status = status }
 
 
-deleteThreat : ThreatFieldId -> Model -> Model
-deleteThreat threatfieldid model =
-    let
-        otherthreats =
-            List.filter (\x -> x.id /= threatfieldid.id) model.threats
-
-        status =
-            "deleted threat id=(" ++ toString threatfieldid.id ++ ")"
-    in
-    { model | threats = otherthreats, status = status }
-
-
 updateThreat : ThreatFieldId -> Msg -> Model -> Model
 updateThreat threatid msg model =
     let
+        getSubThreat : Model -> ThreatFieldId -> Maybe Threat
+        getSubThreat model threatfieldid =
+            {- Gets a threat based on an EditField event -}
+            let
+                --(id,_) = ef
+                threats =
+                    List.filter (\x -> x.id == threatfieldid.id) model.threats
+            in
+            List.head threats
+
         threatToUpdate =
             getSubThreat model threatid
     in
@@ -181,9 +171,6 @@ update msg model =
         EditMsg threatfieldId txt ->
             --{ model | status = "update threats" }
             ( updateThreat threatfieldId msg model, Cmd.none )
-
-        DeleteMsg threatfieldId ->
-            ( deleteThreat threatfieldId model, Cmd.none )
 
         DataReceived (Ok threats) ->
             let

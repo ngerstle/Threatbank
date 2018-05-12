@@ -29,8 +29,6 @@ view m =
 
         subdivs =
             List.map viewThreatCard viewThreatsList
-
-        --List.map viewThreatCard m.threats
     in
     Html.div []
         [ Html.h1 [ Html.Attributes.class "grow" ] [ Html.text "THREAT BANK" ]
@@ -104,38 +102,6 @@ cssThreatRow =
     "ThreatRow"
 
 
-viewThreat : Threat -> Html.Html Msg
-viewThreat threat =
-    let
-        idtextfield =
-            textField threat.id
-
-        iddropdown =
-            dropDown threat.id
-
-        deleteMsg =
-            DeleteMsg (ThreatFieldId threat.id Title)
-    in
-    Html.div [ Html.Attributes.class cssThreatRow ]
-        [ Html.div [ Html.Attributes.class cssThreatId ]
-            [ Html.text "ID: "
-            , Html.text (toString threat.id)
-            ]
-        , Html.div [ Html.Attributes.class cssThreatFields ]
-            [ idtextfield Title threat.title
-            , idtextfield Description threat.description
-            , idtextfield Remediation threat.remediation
-            , iddropdown Severity (toString threat.severity) (List.map toString severitylist)
-            , iddropdown Category (toString threat.category) (List.map toString categorylist)
-            ]
-        , Html.div [ Html.Attributes.class cssThreatButton ]
-            [ Html.button
-                [ Html.Events.onClick deleteMsg ]
-                [ Html.text "Delete Threat" ]
-            ]
-        ]
-
-
 cssThreatCard : String
 cssThreatCard =
     "demo-card-event mdl-card mdl-shadow--2dp"
@@ -178,10 +144,6 @@ viewThreatCard threat =
         selectedMsg : Msg
         selectedMsg =
             EditMsg (ThreatFieldId threat.id Selected) ""
-
-        deleteMsg : Msg
-        deleteMsg =
-            DeleteMsg (ThreatFieldId threat.id Title)
     in
     Html.div []
         [ Html.br [] []
