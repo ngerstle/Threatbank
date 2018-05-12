@@ -3,6 +3,7 @@ module Types exposing (..)
 import Http exposing (Error)
 import Json.Decode
 import Json.Decode.Pipeline
+import Json.Encode
 
 
 type alias Title =
@@ -144,8 +145,33 @@ threatDecoder =
         |> Json.Decode.Pipeline.optional "Selected" Json.Decode.bool False
 
 
+threatEncoder : Threat -> Json.Encode.Value
+threatEncoder threat =
+    Json.Encode.object
+        [ ( "Id", Json.Encode.int threat.id )
+        , ( "Title", Json.Encode.string threat.title )
+        , ( "Description", Json.Encode.string threat.description )
+        , ( "Remediation", Json.Encode.string threat.remediation )
+        , ( "Severity", Json.Encode.string (toString threat.severity) )
+        , ( "Category", Json.Encode.string (toString threat.severity) )
+        , ( "Selected", Json.Encode.bool threat.selected )
+        ]
+
+
 type alias Model =
     { threats : List Threat, status : String }
+
+
+modelEncoder : Model -> Json.Encode.Value
+modelEncoder model =
+    let
+        threatsjson =
+            List.map threatEncoder model.threats
+    in
+    Json.Encode.object
+        [ ( "threats", Json.Encode.list threatsjson )
+        , ( "status", Json.Encode.string model.status )
+        ]
 
 
 type GenerateType
@@ -159,6 +185,7 @@ type alias JsonData =
 
 type Msg
     = Generate GenerateType
+    | ResetSelections
     | EditMsg ThreatFieldId String
     | DeleteMsg ThreatFieldId
     | DataReceived (Result Http.Error JsonData)
