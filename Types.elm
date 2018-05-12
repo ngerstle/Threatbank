@@ -161,8 +161,9 @@ threatEncoder threat =
 type alias Model =
     { threats : List Threat, status : String, viewModel : ViewModel }
 
+
 type alias ViewModel =
-    { state : String}
+    { state : String }
 
 
 modelEncoder : Model -> Json.Encode.Value
@@ -174,6 +175,7 @@ modelEncoder model =
     Json.Encode.object
         [ ( "threats", Json.Encode.list threatsjson )
         , ( "status", Json.Encode.string model.status )
+
         --DON'T ENCODE View State (in ViewModel)
         ]
 
@@ -191,7 +193,6 @@ type Msg
     = Generate GenerateType
     | ResetSelections
     | EditMsg ThreatFieldId String
-    | DeleteMsg ThreatFieldId
     | DataReceived (Result Http.Error JsonData)
     | NewThreatMsg Model
 

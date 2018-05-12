@@ -12203,9 +12203,6 @@ var _user$project$Types$NewThreatMsg = function (a) {
 var _user$project$Types$DataReceived = function (a) {
 	return {ctor: 'DataReceived', _0: a};
 };
-var _user$project$Types$DeleteMsg = function (a) {
-	return {ctor: 'DeleteMsg', _0: a};
-};
 var _user$project$Types$EditMsg = F2(
 	function (a, b) {
 		return {ctor: 'EditMsg', _0: a, _1: b};
@@ -12533,108 +12530,7 @@ var _user$project$View$textField = F3(
 				}
 			});
 	});
-var _user$project$View$viewThreat = function (threat) {
-	var deleteMsg = _user$project$Types$DeleteMsg(
-		A2(_user$project$Types$ThreatFieldId, threat.id, _user$project$Types$Title));
-	var iddropdown = _user$project$View$dropDown(threat.id);
-	var idtextfield = _user$project$View$textField(threat.id);
-	return A2(
-		_elm_lang$html$Html$div,
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html_Attributes$class(_user$project$View$cssThreatRow),
-			_1: {ctor: '[]'}
-		},
-		{
-			ctor: '::',
-			_0: A2(
-				_elm_lang$html$Html$div,
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html_Attributes$class(_user$project$View$cssThreatId),
-					_1: {ctor: '[]'}
-				},
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html$text('ID: '),
-					_1: {
-						ctor: '::',
-						_0: _elm_lang$html$Html$text(
-							_elm_lang$core$Basics$toString(threat.id)),
-						_1: {ctor: '[]'}
-					}
-				}),
-			_1: {
-				ctor: '::',
-				_0: A2(
-					_elm_lang$html$Html$div,
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html_Attributes$class(_user$project$View$cssThreatFields),
-						_1: {ctor: '[]'}
-					},
-					{
-						ctor: '::',
-						_0: A2(idtextfield, _user$project$Types$Title, threat.title),
-						_1: {
-							ctor: '::',
-							_0: A2(idtextfield, _user$project$Types$Description, threat.description),
-							_1: {
-								ctor: '::',
-								_0: A2(idtextfield, _user$project$Types$Remediation, threat.remediation),
-								_1: {
-									ctor: '::',
-									_0: A3(
-										iddropdown,
-										_user$project$Types$Severity,
-										_elm_lang$core$Basics$toString(threat.severity),
-										A2(_elm_lang$core$List$map, _elm_lang$core$Basics$toString, _user$project$Types$severitylist)),
-									_1: {
-										ctor: '::',
-										_0: A3(
-											iddropdown,
-											_user$project$Types$Category,
-											_elm_lang$core$Basics$toString(threat.category),
-											A2(_elm_lang$core$List$map, _elm_lang$core$Basics$toString, _user$project$Types$categorylist)),
-										_1: {ctor: '[]'}
-									}
-								}
-							}
-						}
-					}),
-				_1: {
-					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$div,
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$class(_user$project$View$cssThreatButton),
-							_1: {ctor: '[]'}
-						},
-						{
-							ctor: '::',
-							_0: A2(
-								_elm_lang$html$Html$button,
-								{
-									ctor: '::',
-									_0: _elm_lang$html$Html_Events$onClick(deleteMsg),
-									_1: {ctor: '[]'}
-								},
-								{
-									ctor: '::',
-									_0: _elm_lang$html$Html$text('Delete Threat'),
-									_1: {ctor: '[]'}
-								}),
-							_1: {ctor: '[]'}
-						}),
-					_1: {ctor: '[]'}
-				}
-			}
-		});
-};
 var _user$project$View$viewThreatCard = function (threat) {
-	var deleteMsg = _user$project$Types$DeleteMsg(
-		A2(_user$project$Types$ThreatFieldId, threat.id, _user$project$Types$Title));
 	var selectedMsg = A2(
 		_user$project$Types$EditMsg,
 		A2(_user$project$Types$ThreatFieldId, threat.id, _user$project$Types$Selected),
@@ -12921,25 +12817,6 @@ var _user$project$Main$setid = function (threatList) {
 	var newThreatList = A2(_elm_lang$core$Basics_ops['++'], newIdThreats, threatsId);
 	return newThreatList;
 };
-var _user$project$Main$deleteThreat = F2(
-	function (threatfieldid, model) {
-		var status = A2(
-			_elm_lang$core$Basics_ops['++'],
-			'deleted threat id=(',
-			A2(
-				_elm_lang$core$Basics_ops['++'],
-				_elm_lang$core$Basics$toString(threatfieldid.id),
-				')'));
-		var otherthreats = A2(
-			_elm_lang$core$List$filter,
-			function (x) {
-				return !_elm_lang$core$Native_Utils.eq(x.id, threatfieldid.id);
-			},
-			model.threats);
-		return _elm_lang$core$Native_Utils.update(
-			model,
-			{threats: otherthreats, status: status});
-	});
 var _user$project$Main$updateSubThreat = F2(
 	function (model, threatresult) {
 		var _p0 = function () {
@@ -12968,19 +12845,19 @@ var _user$project$Main$updateSubThreat = F2(
 			model,
 			{threats: newthreats, status: status});
 	});
-var _user$project$Main$getSubThreat = F2(
-	function (model, threatfieldid) {
-		var threats = A2(
-			_elm_lang$core$List$filter,
-			function (x) {
-				return _elm_lang$core$Native_Utils.eq(x.id, threatfieldid.id);
-			},
-			model.threats);
-		return _elm_lang$core$List$head(threats);
-	});
 var _user$project$Main$updateThreat = F3(
 	function (threatid, msg, model) {
-		var threatToUpdate = A2(_user$project$Main$getSubThreat, model, threatid);
+		var getSubThreat = F2(
+			function (model, threatfieldid) {
+				var threats = A2(
+					_elm_lang$core$List$filter,
+					function (x) {
+						return _elm_lang$core$Native_Utils.eq(x.id, threatfieldid.id);
+					},
+					model.threats);
+				return _elm_lang$core$List$head(threats);
+			});
+		var threatToUpdate = A2(getSubThreat, model, threatid);
 		var _p2 = threatToUpdate;
 		if (_p2.ctor === 'Just') {
 			return A2(
@@ -13065,12 +12942,6 @@ var _user$project$Main$update = F2(
 				return {
 					ctor: '_Tuple2',
 					_0: A3(_user$project$Main$updateThreat, _p4._0, msg, model),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
-			case 'DeleteMsg':
-				return {
-					ctor: '_Tuple2',
-					_0: A2(_user$project$Main$deleteThreat, _p4._0, model),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'DataReceived':
