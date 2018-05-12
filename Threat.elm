@@ -1,4 +1,4 @@
-module Threat exposing (update, validateThreat)
+module Threat exposing (exportThreatsCSV, update, validateThreat)
 
 import Types exposing (..)
 
@@ -169,3 +169,29 @@ update ef threat =
 
         _ ->
             Err ( threat, "Bad message to threat.update" )
+
+
+exportThreatsCSV : List Threat -> String
+exportThreatsCSV threats =
+    -- TODO move to type? move json export to threat.elm?
+    --TODO do proper escaping on Title/Description/Remediation
+    let
+        headers =
+            "Id,Title,Description,Remediation,Severity,Category,Selected"
+
+        threatToCsv : Threat -> String
+        threatToCsv threat =
+            String.join ","
+                [ toString threat.id
+                , toString threat.title
+                , toString threat.description
+                , toString threat.remediation
+                , toString threat.severity
+                , toString threat.category
+                , toString threat.selected
+                ]
+    in
+    String.join "\n"
+        (headers
+            :: List.map threatToCsv threats
+        )

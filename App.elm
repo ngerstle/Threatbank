@@ -1,7 +1,10 @@
 module Main exposing (..)
 
+import Base64
 import Html
+import Json.Encode
 import List.Extra
+import Navigation
 import Rest exposing (..)
 import Threat exposing (..)
 import Types exposing (..)
@@ -144,12 +147,36 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         Generate CSV ->
-            --TODO redirect to dataurl with csv
-            ( { model | status = "generate CSV" }, Cmd.none )
+            let
+                -- cmd = Cmd.none
+                activeThreats =
+                    List.filter .selected model.threats
+
+                rawpayload =
+                    exportThreatsCSV activeThreats
+
+                payload64 =
+                    Base64.encode rawpayload
+
+                cmd =
+                    Navigation.load ("data:application/csv;base64," ++ payload64)
+            in
+            ( { model | status = "generate CSV file" }, cmd )
 
         Generate JSON ->
             --TODO redirect to dataurl with json
-            ( { model | status = "generate JSON" }, Cmd.none )
+            let
+                -- cmd = Cmd.none
+                rawpayload =
+                    Json.Encode.encode 2 (modelEncoder model)
+
+                payload64 =
+                    Base64.encode rawpayload
+
+                cmd =
+                    Navigation.load ("data:application/json;base64," ++ payload64)
+            in
+            ( { model | status = "generate JSON" }, cmd )
 
         EditMsg threatfieldId txt ->
             --{ model | status = "update threats" }
@@ -176,6 +203,19 @@ update msg model =
         DataReceived (Err httpError) ->
             ( { model
                 | status = "httperror " ++ createErrorMessage httpError
+              }
+            , Cmd.none
+            )
+
+        ResetSelections ->
+            let
+                newmodel =
+                    { model
+                        | threats = List.map (\t -> { t | selected = False }) model.threats
+                    }
+            in
+            ( { newmodel
+                | status = "threat selections cleared.."
               }
             , Cmd.none
             )

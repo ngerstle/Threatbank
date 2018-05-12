@@ -15,7 +15,8 @@ generateButton msg text =
     Html.div [ Html.Attributes.class "GenerateButton" ]
         [ Html.button
             [ Html.Attributes.class "mdl-button mdl-js-button mdl-button--raised"
-             , Html.Events.onClick msg ]
+            , Html.Events.onClick msg
+            ]
             [ Html.text text ]
         ]
 
@@ -24,19 +25,24 @@ view : Model -> Html.Html Msg
 view m =
     let
         viewThreatsList =
-                m.threats
+            m.threats
+
         subdivs =
             List.map viewThreatCard viewThreatsList
-            --List.map viewThreatCard m.threats
+
+        --List.map viewThreatCard m.threats
     in
     Html.div []
         [ Html.h1 [ Html.Attributes.class "grow" ] [ Html.text "THREAT BANK" ]
         , Html.div [ Html.Attributes.class "ThreatTable" ] subdivs
         , Html.br [] []
         , Html.br [] []
+
         --TODO , Html.div [addRow] -- option to add a threat
         , generateButton (Generate CSV) "Generate CSV"
---        , Html.text ("Status: >>" ++ m.status ++ "<<")
+        , generateButton (Generate JSON) "Generate JSON"
+        , generateButton ResetSelections "Reset Selections"
+        , Html.text ("Status: >>" ++ m.status ++ "<<")
         ]
 
 
