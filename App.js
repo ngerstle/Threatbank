@@ -12053,10 +12053,13 @@ var _user$project$Types$Threat = F7(
 	function (a, b, c, d, e, f, g) {
 		return {id: a, title: b, description: c, remediation: d, severity: e, category: f, selected: g};
 	});
-var _user$project$Types$Model = F2(
-	function (a, b) {
-		return {threats: a, status: b};
+var _user$project$Types$Model = F3(
+	function (a, b, c) {
+		return {threats: a, status: b, viewModel: c};
 	});
+var _user$project$Types$ViewModel = function (a) {
+	return {state: a};
+};
 var _user$project$Types$ThreatFieldId = F2(
 	function (a, b) {
 		return {id: a, field: b};
@@ -13141,8 +13144,9 @@ var _user$project$Main$update = F2(
 		}
 	});
 var _user$project$Main$init = function () {
+	var iviewmodel = _user$project$Types$ViewModel('');
 	var threats = _user$project$Rest$loadThreats('data');
-	var imodel = A2(_user$project$Types$Model, threats, 'initial model, predataload');
+	var imodel = A3(_user$project$Types$Model, threats, 'initial model, predataload', iviewmodel);
 	return {ctor: '_Tuple2', _0: imodel, _1: _user$project$Rest$getJsonData};
 }();
 var _user$project$Main$main = _elm_lang$html$Html$program(

@@ -17,8 +17,10 @@ init =
         threats =
             loadThreats "data"
 
+        iviewmodel =
+            ViewModel ""
         imodel =
-            Model threats "initial model, predataload"
+            Model threats "initial model, predataload" iviewmodel
     in
     ( imodel, getJsonData )
 
