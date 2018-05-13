@@ -5,6 +5,7 @@ import Html.Attributes
 import Html.Events
 import Json.Decode
 import Types exposing (..)
+import Threat exposing (..)
 
 
 --import Threat exposing (..)
@@ -37,10 +38,25 @@ view m =
         , Html.br [] []
 
         --TODO , Html.div [addRow] -- option to add a threat
-        , generateButton (Generate CSV) "Generate CSV"
+        , newThreat
+        , viewButtons
+        , Html.text ("Status: >>" ++ m.status ++ "<<")
+        ]
+
+
+newThreat : Html.Html Msg
+newThreat =
+    Html.div []
+        [ Html.text "New threat field here"
+        ]
+
+
+viewButtons : Html.Html Msg
+viewButtons =
+    Html.div []
+        [ generateButton (Generate CSV) "Generate CSV"
         , generateButton (Generate JSON) "Generate JSON"
         , generateButton ResetSelections "Reset Selections"
-        , Html.text ("Status: >>" ++ m.status ++ "<<")
         ]
 
 

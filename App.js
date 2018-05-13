@@ -11966,7 +11966,141 @@ var _truqu$elm_base64$Base64_Encode$encode = function (input) {
 var _truqu$elm_base64$Base64$decode = _truqu$elm_base64$Base64_Decode$decode;
 var _truqu$elm_base64$Base64$encode = _truqu$elm_base64$Base64_Encode$encode;
 
-var _user$project$Types$threatEncoder = function (threat) {
+var _user$project$Threat$exportThreatsCSV = function (threats) {
+	var threatToCsv = function (threat) {
+		return A2(
+			_elm_lang$core$String$join,
+			',',
+			{
+				ctor: '::',
+				_0: _elm_lang$core$Basics$toString(threat.id),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$core$Basics$toString(threat.title),
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$core$Basics$toString(threat.description),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$core$Basics$toString(threat.remediation),
+							_1: {
+								ctor: '::',
+								_0: _elm_lang$core$Basics$toString(threat.severity),
+								_1: {
+									ctor: '::',
+									_0: _elm_lang$core$Basics$toString(threat.category),
+									_1: {
+										ctor: '::',
+										_0: _elm_lang$core$Basics$toString(threat.selected),
+										_1: {ctor: '[]'}
+									}
+								}
+							}
+						}
+					}
+				}
+			});
+	};
+	var headers = 'Id,Title,Description,Remediation,Severity,Category,Selected';
+	return A2(
+		_elm_lang$core$String$join,
+		'\n',
+		{
+			ctor: '::',
+			_0: headers,
+			_1: A2(_elm_lang$core$List$map, threatToCsv, threats)
+		});
+};
+var _user$project$Threat$updateDropdownField = F3(
+	function (threatfield, text, threat) {
+		var status = 'not implemented';
+		return _elm_lang$core$Result$Err(
+			{ctor: '_Tuple2', _0: threat, _1: status});
+	});
+var _user$project$Threat$validateCategory = function (category) {
+	return _elm_lang$core$Result$Ok(category);
+};
+var _user$project$Threat$validateSeverity = function (severity) {
+	return _elm_lang$core$Result$Ok(severity);
+};
+var _user$project$Threat$validateRemediation = function (remediation) {
+	var remediationlength = _elm_lang$core$String$length(remediation);
+	return _elm_lang$core$Native_Utils.eq(remediationlength, 0) ? _elm_lang$core$Result$Err('Missing remediation') : ((_elm_lang$core$Native_Utils.cmp(remediationlength, 10) < 0) ? _elm_lang$core$Result$Err('Remediation suspiciously short (<10)') : _elm_lang$core$Result$Ok(remediation));
+};
+var _user$project$Threat$validateDescription = function (description) {
+	var descriptionlength = _elm_lang$core$String$length(description);
+	return _elm_lang$core$Native_Utils.eq(descriptionlength, 0) ? _elm_lang$core$Result$Err('Missing description') : ((_elm_lang$core$Native_Utils.cmp(descriptionlength, 10) < 0) ? _elm_lang$core$Result$Err('Description suspiciously short (<10)') : _elm_lang$core$Result$Ok(description));
+};
+var _user$project$Threat$maxTitleLength = 60;
+var _user$project$Threat$validateTitle = function (title) {
+	var titlelength = _elm_lang$core$String$length(title);
+	return _elm_lang$core$Native_Utils.eq(titlelength, 0) ? _elm_lang$core$Result$Err('Missing title') : ((_elm_lang$core$Native_Utils.cmp(titlelength, _user$project$Threat$maxTitleLength) > 0) ? _elm_lang$core$Result$Err(
+		A2(
+			_elm_lang$core$Basics_ops['++'],
+			'Title too long (>',
+			A2(
+				_elm_lang$core$Basics_ops['++'],
+				_elm_lang$core$Basics$toString(_user$project$Threat$maxTitleLength),
+				')'))) : _elm_lang$core$Result$Ok(title));
+};
+var _user$project$Threat$validateID = function (id) {
+	return _elm_lang$core$Result$Ok(id);
+};
+var _user$project$Threat$validateThreat = function (threat) {
+	var getErr = function (res) {
+		var _p0 = res;
+		if (_p0.ctor === 'Err') {
+			return {
+				ctor: '::',
+				_0: _p0._0,
+				_1: {ctor: '[]'}
+			};
+		} else {
+			return {ctor: '[]'};
+		}
+	};
+	var remediationErr = _user$project$Threat$validateRemediation(threat.remediation);
+	var categoryErr = _user$project$Threat$validateCategory(threat.category);
+	var severityErr = _user$project$Threat$validateSeverity(threat.severity);
+	var descriptionErr = _user$project$Threat$validateDescription(threat.description);
+	var titleErr = _user$project$Threat$validateTitle(threat.title);
+	var idErr = _user$project$Threat$validateID(threat.id);
+	var errorlist = {
+		ctor: '::',
+		_0: getErr(idErr),
+		_1: {
+			ctor: '::',
+			_0: getErr(titleErr),
+			_1: {
+				ctor: '::',
+				_0: getErr(descriptionErr),
+				_1: {
+					ctor: '::',
+					_0: getErr(severityErr),
+					_1: {
+						ctor: '::',
+						_0: getErr(categoryErr),
+						_1: {
+							ctor: '::',
+							_0: getErr(remediationErr),
+							_1: {ctor: '[]'}
+						}
+					}
+				}
+			}
+		}
+	};
+	var filteredList = A3(
+		_elm_lang$core$List$foldr,
+		F2(
+			function (x, y) {
+				return A2(_elm_lang$core$Basics_ops['++'], x, y);
+			}),
+		{ctor: '[]'},
+		errorlist);
+	return _elm_lang$core$List$isEmpty(filteredList) ? _elm_lang$core$Result$Ok(threat) : _elm_lang$core$Result$Err(filteredList);
+};
+var _user$project$Threat$threatEncoder = function (threat) {
 	return _elm_lang$core$Json_Encode$object(
 		{
 			ctor: '::',
@@ -12028,8 +12162,193 @@ var _user$project$Types$threatEncoder = function (threat) {
 			}
 		});
 };
+var _user$project$Threat$Threat = F7(
+	function (a, b, c, d, e, f, g) {
+		return {id: a, title: b, description: c, remediation: d, severity: e, category: f, selected: g};
+	});
+var _user$project$Threat$ThreatFieldId = F2(
+	function (a, b) {
+		return {id: a, field: b};
+	});
+var _user$project$Threat$High = {ctor: 'High'};
+var _user$project$Threat$Medium = {ctor: 'Medium'};
+var _user$project$Threat$Low = {ctor: 'Low'};
+var _user$project$Threat$severitylist = {
+	ctor: '::',
+	_0: _user$project$Threat$Low,
+	_1: {
+		ctor: '::',
+		_0: _user$project$Threat$Medium,
+		_1: {
+			ctor: '::',
+			_0: _user$project$Threat$High,
+			_1: {ctor: '[]'}
+		}
+	}
+};
+var _user$project$Threat$severityDecoder = A2(
+	_elm_lang$core$Json_Decode$andThen,
+	function (str) {
+		var _p1 = str;
+		switch (_p1) {
+			case 'Low':
+				return _elm_lang$core$Json_Decode$succeed(_user$project$Threat$Low);
+			case 'Medium':
+				return _elm_lang$core$Json_Decode$succeed(_user$project$Threat$Medium);
+			case 'High':
+				return _elm_lang$core$Json_Decode$succeed(_user$project$Threat$High);
+			default:
+				return _elm_lang$core$Json_Decode$fail(
+					A2(_elm_lang$core$Basics_ops['++'], 'Unknown category ', str));
+		}
+	},
+	_elm_lang$core$Json_Decode$string);
+var _user$project$Threat$Miscellaneous = {ctor: 'Miscellaneous'};
+var _user$project$Threat$ElevationOfPrivilege = {ctor: 'ElevationOfPrivilege'};
+var _user$project$Threat$DoS = {ctor: 'DoS'};
+var _user$project$Threat$InformationDisclosure = {ctor: 'InformationDisclosure'};
+var _user$project$Threat$Repudiation = {ctor: 'Repudiation'};
+var _user$project$Threat$Tampering = {ctor: 'Tampering'};
+var _user$project$Threat$Spoofing = {ctor: 'Spoofing'};
+var _user$project$Threat$categorylist = {
+	ctor: '::',
+	_0: _user$project$Threat$Spoofing,
+	_1: {
+		ctor: '::',
+		_0: _user$project$Threat$Tampering,
+		_1: {
+			ctor: '::',
+			_0: _user$project$Threat$Repudiation,
+			_1: {
+				ctor: '::',
+				_0: _user$project$Threat$InformationDisclosure,
+				_1: {
+					ctor: '::',
+					_0: _user$project$Threat$DoS,
+					_1: {
+						ctor: '::',
+						_0: _user$project$Threat$ElevationOfPrivilege,
+						_1: {
+							ctor: '::',
+							_0: _user$project$Threat$Miscellaneous,
+							_1: {ctor: '[]'}
+						}
+					}
+				}
+			}
+		}
+	}
+};
+var _user$project$Threat$categoryDecoder = A2(
+	_elm_lang$core$Json_Decode$andThen,
+	function (str) {
+		var _p2 = str;
+		switch (_p2) {
+			case 'Spoofing':
+				return _elm_lang$core$Json_Decode$succeed(_user$project$Threat$Spoofing);
+			case 'Tampering':
+				return _elm_lang$core$Json_Decode$succeed(_user$project$Threat$Tampering);
+			case 'Repudiation':
+				return _elm_lang$core$Json_Decode$succeed(_user$project$Threat$Repudiation);
+			case 'Information Disclosure':
+				return _elm_lang$core$Json_Decode$succeed(_user$project$Threat$InformationDisclosure);
+			case 'InformationDisclosure':
+				return _elm_lang$core$Json_Decode$succeed(_user$project$Threat$InformationDisclosure);
+			case 'Denial of Service':
+				return _elm_lang$core$Json_Decode$succeed(_user$project$Threat$DoS);
+			case 'DoS':
+				return _elm_lang$core$Json_Decode$succeed(_user$project$Threat$DoS);
+			case 'Elevation of Privilege':
+				return _elm_lang$core$Json_Decode$succeed(_user$project$Threat$ElevationOfPrivilege);
+			case 'ElevationOfPrivilege':
+				return _elm_lang$core$Json_Decode$succeed(_user$project$Threat$ElevationOfPrivilege);
+			case 'Miscellaneous':
+				return _elm_lang$core$Json_Decode$succeed(_user$project$Threat$Miscellaneous);
+			default:
+				return _elm_lang$core$Json_Decode$fail(
+					A2(_elm_lang$core$Basics_ops['++'], 'Unknown category ', str));
+		}
+	},
+	_elm_lang$core$Json_Decode$string);
+var _user$project$Threat$threatDecoder = A4(
+	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+	'Selected',
+	_elm_lang$core$Json_Decode$bool,
+	false,
+	A3(
+		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+		'Category',
+		_user$project$Threat$categoryDecoder,
+		A3(
+			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+			'Severity',
+			_user$project$Threat$severityDecoder,
+			A3(
+				_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+				'Remediation',
+				_elm_lang$core$Json_Decode$string,
+				A3(
+					_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+					'Description',
+					_elm_lang$core$Json_Decode$string,
+					A3(
+						_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+						'Title',
+						_elm_lang$core$Json_Decode$string,
+						A4(
+							_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+							'Id',
+							_elm_lang$core$Json_Decode$int,
+							-1,
+							_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$Threat$Threat))))))));
+var _user$project$Threat$Selected = {ctor: 'Selected'};
+var _user$project$Threat$Remediation = {ctor: 'Remediation'};
+var _user$project$Threat$Category = {ctor: 'Category'};
+var _user$project$Threat$Severity = {ctor: 'Severity'};
+var _user$project$Threat$updateField = F3(
+	function (threatfieldid, text, threat) {
+		if (!_elm_lang$core$Native_Utils.eq(threat.id, threatfieldid.id)) {
+			return _elm_lang$core$Result$Err(
+				{ctor: '_Tuple2', _0: threat, _1: text});
+		} else {
+			var _p3 = threatfieldid.field;
+			switch (_p3.ctor) {
+				case 'Title':
+					return _elm_lang$core$Result$Ok(
+						_elm_lang$core$Native_Utils.update(
+							threat,
+							{title: text}));
+				case 'Description':
+					return _elm_lang$core$Result$Ok(
+						_elm_lang$core$Native_Utils.update(
+							threat,
+							{description: text}));
+				case 'Remediation':
+					return _elm_lang$core$Result$Ok(
+						_elm_lang$core$Native_Utils.update(
+							threat,
+							{remediation: text}));
+				case 'Severity':
+					return A3(_user$project$Threat$updateDropdownField, _user$project$Threat$Severity, text, threat);
+				case 'Category':
+					return A3(_user$project$Threat$updateDropdownField, _user$project$Threat$Category, text, threat);
+				case 'ID':
+					return _elm_lang$core$Result$Err(
+						{ctor: '_Tuple2', _0: threat, _1: 'Can\'t change a threat ID'});
+				default:
+					return _elm_lang$core$Result$Ok(
+						_elm_lang$core$Native_Utils.update(
+							threat,
+							{selected: !threat.selected}));
+			}
+		}
+	});
+var _user$project$Threat$Description = {ctor: 'Description'};
+var _user$project$Threat$Title = {ctor: 'Title'};
+var _user$project$Threat$ID = {ctor: 'ID'};
+
 var _user$project$Types$modelEncoder = function (model) {
-	var threatsjson = A2(_elm_lang$core$List$map, _user$project$Types$threatEncoder, model.threats);
+	var threatsjson = A2(_elm_lang$core$List$map, _user$project$Threat$threatEncoder, model.threats);
 	return _elm_lang$core$Json_Encode$object(
 		{
 			ctor: '::',
@@ -12049,10 +12368,6 @@ var _user$project$Types$modelEncoder = function (model) {
 			}
 		});
 };
-var _user$project$Types$Threat = F7(
-	function (a, b, c, d, e, f, g) {
-		return {id: a, title: b, description: c, remediation: d, severity: e, category: f, selected: g};
-	});
 var _user$project$Types$Model = F3(
 	function (a, b, c) {
 		return {threats: a, status: b, viewModel: c};
@@ -12060,141 +12375,6 @@ var _user$project$Types$Model = F3(
 var _user$project$Types$ViewModel = function (a) {
 	return {state: a};
 };
-var _user$project$Types$ThreatFieldId = F2(
-	function (a, b) {
-		return {id: a, field: b};
-	});
-var _user$project$Types$High = {ctor: 'High'};
-var _user$project$Types$Medium = {ctor: 'Medium'};
-var _user$project$Types$Low = {ctor: 'Low'};
-var _user$project$Types$severitylist = {
-	ctor: '::',
-	_0: _user$project$Types$Low,
-	_1: {
-		ctor: '::',
-		_0: _user$project$Types$Medium,
-		_1: {
-			ctor: '::',
-			_0: _user$project$Types$High,
-			_1: {ctor: '[]'}
-		}
-	}
-};
-var _user$project$Types$severityDecoder = A2(
-	_elm_lang$core$Json_Decode$andThen,
-	function (str) {
-		var _p0 = str;
-		switch (_p0) {
-			case 'Low':
-				return _elm_lang$core$Json_Decode$succeed(_user$project$Types$Low);
-			case 'Medium':
-				return _elm_lang$core$Json_Decode$succeed(_user$project$Types$Medium);
-			case 'High':
-				return _elm_lang$core$Json_Decode$succeed(_user$project$Types$High);
-			default:
-				return _elm_lang$core$Json_Decode$fail(
-					A2(_elm_lang$core$Basics_ops['++'], 'Unknown category ', str));
-		}
-	},
-	_elm_lang$core$Json_Decode$string);
-var _user$project$Types$Miscellaneous = {ctor: 'Miscellaneous'};
-var _user$project$Types$ElevationOfPrivilege = {ctor: 'ElevationOfPrivilege'};
-var _user$project$Types$DoS = {ctor: 'DoS'};
-var _user$project$Types$InformationDisclosure = {ctor: 'InformationDisclosure'};
-var _user$project$Types$Repudiation = {ctor: 'Repudiation'};
-var _user$project$Types$Tampering = {ctor: 'Tampering'};
-var _user$project$Types$Spoofing = {ctor: 'Spoofing'};
-var _user$project$Types$categorylist = {
-	ctor: '::',
-	_0: _user$project$Types$Spoofing,
-	_1: {
-		ctor: '::',
-		_0: _user$project$Types$Tampering,
-		_1: {
-			ctor: '::',
-			_0: _user$project$Types$Repudiation,
-			_1: {
-				ctor: '::',
-				_0: _user$project$Types$InformationDisclosure,
-				_1: {
-					ctor: '::',
-					_0: _user$project$Types$DoS,
-					_1: {
-						ctor: '::',
-						_0: _user$project$Types$ElevationOfPrivilege,
-						_1: {
-							ctor: '::',
-							_0: _user$project$Types$Miscellaneous,
-							_1: {ctor: '[]'}
-						}
-					}
-				}
-			}
-		}
-	}
-};
-var _user$project$Types$categoryDecoder = A2(
-	_elm_lang$core$Json_Decode$andThen,
-	function (str) {
-		var _p1 = str;
-		switch (_p1) {
-			case 'Spoofing':
-				return _elm_lang$core$Json_Decode$succeed(_user$project$Types$Spoofing);
-			case 'Tampering':
-				return _elm_lang$core$Json_Decode$succeed(_user$project$Types$Tampering);
-			case 'Repudiation':
-				return _elm_lang$core$Json_Decode$succeed(_user$project$Types$Repudiation);
-			case 'Information Disclosure':
-				return _elm_lang$core$Json_Decode$succeed(_user$project$Types$InformationDisclosure);
-			case 'InformationDisclosure':
-				return _elm_lang$core$Json_Decode$succeed(_user$project$Types$InformationDisclosure);
-			case 'Denial of Service':
-				return _elm_lang$core$Json_Decode$succeed(_user$project$Types$DoS);
-			case 'DoS':
-				return _elm_lang$core$Json_Decode$succeed(_user$project$Types$DoS);
-			case 'Elevation of Privilege':
-				return _elm_lang$core$Json_Decode$succeed(_user$project$Types$ElevationOfPrivilege);
-			case 'ElevationOfPrivilege':
-				return _elm_lang$core$Json_Decode$succeed(_user$project$Types$ElevationOfPrivilege);
-			case 'Miscellaneous':
-				return _elm_lang$core$Json_Decode$succeed(_user$project$Types$Miscellaneous);
-			default:
-				return _elm_lang$core$Json_Decode$fail(
-					A2(_elm_lang$core$Basics_ops['++'], 'Unknown category ', str));
-		}
-	},
-	_elm_lang$core$Json_Decode$string);
-var _user$project$Types$threatDecoder = A4(
-	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
-	'Selected',
-	_elm_lang$core$Json_Decode$bool,
-	false,
-	A3(
-		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-		'Category',
-		_user$project$Types$categoryDecoder,
-		A3(
-			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-			'Severity',
-			_user$project$Types$severityDecoder,
-			A3(
-				_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-				'Remediation',
-				_elm_lang$core$Json_Decode$string,
-				A3(
-					_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-					'Description',
-					_elm_lang$core$Json_Decode$string,
-					A3(
-						_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-						'Title',
-						_elm_lang$core$Json_Decode$string,
-						A4(
-							_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
-							'Id',
-							_elm_lang$core$Json_Decode$int,
-							-1,
-							_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$Types$Threat))))))));
 var _user$project$Types$JSON = {ctor: 'JSON'};
 var _user$project$Types$CSV = {ctor: 'CSV'};
 var _user$project$Types$NewThreatMsg = function (a) {
@@ -12211,13 +12391,6 @@ var _user$project$Types$ResetSelections = {ctor: 'ResetSelections'};
 var _user$project$Types$Generate = function (a) {
 	return {ctor: 'Generate', _0: a};
 };
-var _user$project$Types$Selected = {ctor: 'Selected'};
-var _user$project$Types$Remediation = {ctor: 'Remediation'};
-var _user$project$Types$Category = {ctor: 'Category'};
-var _user$project$Types$Severity = {ctor: 'Severity'};
-var _user$project$Types$Description = {ctor: 'Description'};
-var _user$project$Types$Title = {ctor: 'Title'};
-var _user$project$Types$ID = {ctor: 'ID'};
 
 var _user$project$Rest$createErrorMessage = function (httpError) {
 	var _p0 = httpError;
@@ -12239,9 +12412,9 @@ var _user$project$Rest$decodeRequestJson = F2(
 		return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 	});
 var _user$project$Rest$loadThreats = function (url) {
-	var testthreat3 = A7(_user$project$Types$Threat, 3, 'ab', 'cd', 'ef', _user$project$Types$Low, _user$project$Types$Spoofing, true);
-	var testthreat2 = A7(_user$project$Types$Threat, 2, 'ab', 'cd', 'ef', _user$project$Types$Low, _user$project$Types$Spoofing, true);
-	var testthreat1 = A7(_user$project$Types$Threat, 1, 'ab', 'cd', 'ef', _user$project$Types$Low, _user$project$Types$Spoofing, true);
+	var testthreat3 = A7(_user$project$Threat$Threat, 3, 'ab', 'cd', 'ef', _user$project$Threat$Low, _user$project$Threat$Spoofing, true);
+	var testthreat2 = A7(_user$project$Threat$Threat, 2, 'ab', 'cd', 'ef', _user$project$Threat$Low, _user$project$Threat$Spoofing, true);
+	var testthreat1 = A7(_user$project$Threat$Threat, 1, 'ab', 'cd', 'ef', _user$project$Threat$Low, _user$project$Threat$Spoofing, true);
 	return {
 		ctor: '::',
 		_0: testthreat1,
@@ -12258,193 +12431,10 @@ var _user$project$Rest$loadThreats = function (url) {
 };
 var _user$project$Rest$threatbankurl = 'threatbank_json.json';
 var _user$project$Rest$getJsonData = function () {
-	var jsonDecoder = _elm_lang$core$Json_Decode$list(_user$project$Types$threatDecoder);
+	var jsonDecoder = _elm_lang$core$Json_Decode$list(_user$project$Threat$threatDecoder);
 	var jsonRequest = A2(_elm_lang$http$Http$get, _user$project$Rest$threatbankurl, jsonDecoder);
 	return A2(_elm_lang$http$Http$send, _user$project$Types$DataReceived, jsonRequest);
 }();
-
-var _user$project$Threat$exportThreatsCSV = function (threats) {
-	var threatToCsv = function (threat) {
-		return A2(
-			_elm_lang$core$String$join,
-			',',
-			{
-				ctor: '::',
-				_0: _elm_lang$core$Basics$toString(threat.id),
-				_1: {
-					ctor: '::',
-					_0: _elm_lang$core$Basics$toString(threat.title),
-					_1: {
-						ctor: '::',
-						_0: _elm_lang$core$Basics$toString(threat.description),
-						_1: {
-							ctor: '::',
-							_0: _elm_lang$core$Basics$toString(threat.remediation),
-							_1: {
-								ctor: '::',
-								_0: _elm_lang$core$Basics$toString(threat.severity),
-								_1: {
-									ctor: '::',
-									_0: _elm_lang$core$Basics$toString(threat.category),
-									_1: {
-										ctor: '::',
-										_0: _elm_lang$core$Basics$toString(threat.selected),
-										_1: {ctor: '[]'}
-									}
-								}
-							}
-						}
-					}
-				}
-			});
-	};
-	var headers = 'Id,Title,Description,Remediation,Severity,Category,Selected';
-	return A2(
-		_elm_lang$core$String$join,
-		'\n',
-		{
-			ctor: '::',
-			_0: headers,
-			_1: A2(_elm_lang$core$List$map, threatToCsv, threats)
-		});
-};
-var _user$project$Threat$updateDropdownField = F3(
-	function (threatfield, text, threat) {
-		var status = 'not implemented';
-		return _elm_lang$core$Result$Err(
-			{ctor: '_Tuple2', _0: threat, _1: status});
-	});
-var _user$project$Threat$updateField = F3(
-	function (threatfieldid, text, threat) {
-		if (!_elm_lang$core$Native_Utils.eq(threat.id, threatfieldid.id)) {
-			return _elm_lang$core$Result$Err(
-				{ctor: '_Tuple2', _0: threat, _1: text});
-		} else {
-			var _p0 = threatfieldid.field;
-			switch (_p0.ctor) {
-				case 'Title':
-					return _elm_lang$core$Result$Ok(
-						_elm_lang$core$Native_Utils.update(
-							threat,
-							{title: text}));
-				case 'Description':
-					return _elm_lang$core$Result$Ok(
-						_elm_lang$core$Native_Utils.update(
-							threat,
-							{description: text}));
-				case 'Remediation':
-					return _elm_lang$core$Result$Ok(
-						_elm_lang$core$Native_Utils.update(
-							threat,
-							{remediation: text}));
-				case 'Severity':
-					return A3(_user$project$Threat$updateDropdownField, _user$project$Types$Severity, text, threat);
-				case 'Category':
-					return A3(_user$project$Threat$updateDropdownField, _user$project$Types$Category, text, threat);
-				case 'ID':
-					return _elm_lang$core$Result$Err(
-						{ctor: '_Tuple2', _0: threat, _1: 'Can\'t change a threat ID'});
-				default:
-					return _elm_lang$core$Result$Ok(
-						_elm_lang$core$Native_Utils.update(
-							threat,
-							{selected: !threat.selected}));
-			}
-		}
-	});
-var _user$project$Threat$update = F2(
-	function (ef, threat) {
-		var _p1 = ef;
-		if (_p1.ctor === 'EditMsg') {
-			return A3(_user$project$Threat$updateField, _p1._0, _p1._1, threat);
-		} else {
-			return _elm_lang$core$Result$Err(
-				{ctor: '_Tuple2', _0: threat, _1: 'Bad message to threat.update'});
-		}
-	});
-var _user$project$Threat$validateCategory = function (category) {
-	return _elm_lang$core$Result$Ok(category);
-};
-var _user$project$Threat$validateSeverity = function (severity) {
-	return _elm_lang$core$Result$Ok(severity);
-};
-var _user$project$Threat$validateRemediation = function (remediation) {
-	var remediationlength = _elm_lang$core$String$length(remediation);
-	return _elm_lang$core$Native_Utils.eq(remediationlength, 0) ? _elm_lang$core$Result$Err('Missing remediation') : ((_elm_lang$core$Native_Utils.cmp(remediationlength, 10) < 0) ? _elm_lang$core$Result$Err('Remediation suspiciously short (<10)') : _elm_lang$core$Result$Ok(remediation));
-};
-var _user$project$Threat$validateDescription = function (description) {
-	var descriptionlength = _elm_lang$core$String$length(description);
-	return _elm_lang$core$Native_Utils.eq(descriptionlength, 0) ? _elm_lang$core$Result$Err('Missing description') : ((_elm_lang$core$Native_Utils.cmp(descriptionlength, 10) < 0) ? _elm_lang$core$Result$Err('Description suspiciously short (<10)') : _elm_lang$core$Result$Ok(description));
-};
-var _user$project$Threat$maxTitleLength = 60;
-var _user$project$Threat$validateTitle = function (title) {
-	var titlelength = _elm_lang$core$String$length(title);
-	return _elm_lang$core$Native_Utils.eq(titlelength, 0) ? _elm_lang$core$Result$Err('Missing title') : ((_elm_lang$core$Native_Utils.cmp(titlelength, _user$project$Threat$maxTitleLength) > 0) ? _elm_lang$core$Result$Err(
-		A2(
-			_elm_lang$core$Basics_ops['++'],
-			'Title too long (>',
-			A2(
-				_elm_lang$core$Basics_ops['++'],
-				_elm_lang$core$Basics$toString(_user$project$Threat$maxTitleLength),
-				')'))) : _elm_lang$core$Result$Ok(title));
-};
-var _user$project$Threat$validateID = function (id) {
-	return _elm_lang$core$Result$Ok(id);
-};
-var _user$project$Threat$validateThreat = function (threat) {
-	var getErr = function (res) {
-		var _p2 = res;
-		if (_p2.ctor === 'Err') {
-			return {
-				ctor: '::',
-				_0: _p2._0,
-				_1: {ctor: '[]'}
-			};
-		} else {
-			return {ctor: '[]'};
-		}
-	};
-	var remediationErr = _user$project$Threat$validateRemediation(threat.remediation);
-	var categoryErr = _user$project$Threat$validateCategory(threat.category);
-	var severityErr = _user$project$Threat$validateSeverity(threat.severity);
-	var descriptionErr = _user$project$Threat$validateDescription(threat.description);
-	var titleErr = _user$project$Threat$validateTitle(threat.title);
-	var idErr = _user$project$Threat$validateID(threat.id);
-	var errorlist = {
-		ctor: '::',
-		_0: getErr(idErr),
-		_1: {
-			ctor: '::',
-			_0: getErr(titleErr),
-			_1: {
-				ctor: '::',
-				_0: getErr(descriptionErr),
-				_1: {
-					ctor: '::',
-					_0: getErr(severityErr),
-					_1: {
-						ctor: '::',
-						_0: getErr(categoryErr),
-						_1: {
-							ctor: '::',
-							_0: getErr(remediationErr),
-							_1: {ctor: '[]'}
-						}
-					}
-				}
-			}
-		}
-	};
-	var filteredList = A3(
-		_elm_lang$core$List$foldr,
-		F2(
-			function (x, y) {
-				return A2(_elm_lang$core$Basics_ops['++'], x, y);
-			}),
-		{ctor: '[]'},
-		errorlist);
-	return _elm_lang$core$List$isEmpty(filteredList) ? _elm_lang$core$Result$Ok(threat) : _elm_lang$core$Result$Err(filteredList);
-};
 
 var _user$project$View$dropDown = F4(
 	function (id, currentvalue, fieldname, values) {
@@ -12486,7 +12476,7 @@ var _user$project$View$onBlurWithTargetValue = function (tagger) {
 };
 var _user$project$View$textField = F3(
 	function (id, fieldname, text) {
-		var tfid = A2(_user$project$Types$ThreatFieldId, id, fieldname);
+		var tfid = A2(_user$project$Threat$ThreatFieldId, id, fieldname);
 		var msg = _user$project$Types$EditMsg(tfid);
 		var sfieldname = _elm_lang$core$Basics$toString(fieldname);
 		return A2(
@@ -12533,7 +12523,7 @@ var _user$project$View$textField = F3(
 var _user$project$View$viewThreatCard = function (threat) {
 	var selectedMsg = A2(
 		_user$project$Types$EditMsg,
-		A2(_user$project$Types$ThreatFieldId, threat.id, _user$project$Types$Selected),
+		A2(_user$project$Threat$ThreatFieldId, threat.id, _user$project$Threat$Selected),
 		'');
 	var iddropdown = _user$project$View$dropDown(threat.id);
 	var idtextfield = _user$project$View$textField(threat.id);
@@ -12672,6 +12662,14 @@ var _user$project$View$viewThreatCard = function (threat) {
 			}
 		});
 };
+var _user$project$View$newThreat = A2(
+	_elm_lang$html$Html$div,
+	{ctor: '[]'},
+	{
+		ctor: '::',
+		_0: _elm_lang$html$Html$text('New threat field here'),
+		_1: {ctor: '[]'}
+	});
 var _user$project$View$generateButton = F2(
 	function (msg, text) {
 		return A2(
@@ -12701,6 +12699,28 @@ var _user$project$View$generateButton = F2(
 					}),
 				_1: {ctor: '[]'}
 			});
+	});
+var _user$project$View$viewButtons = A2(
+	_elm_lang$html$Html$div,
+	{ctor: '[]'},
+	{
+		ctor: '::',
+		_0: A2(
+			_user$project$View$generateButton,
+			_user$project$Types$Generate(_user$project$Types$CSV),
+			'Generate CSV'),
+		_1: {
+			ctor: '::',
+			_0: A2(
+				_user$project$View$generateButton,
+				_user$project$Types$Generate(_user$project$Types$JSON),
+				'Generate JSON'),
+			_1: {
+				ctor: '::',
+				_0: A2(_user$project$View$generateButton, _user$project$Types$ResetSelections, 'Reset Selections'),
+				_1: {ctor: '[]'}
+			}
+		}
 	});
 var _user$project$View$view = function (m) {
 	var viewThreatsList = m.threats;
@@ -12746,28 +12766,18 @@ var _user$project$View$view = function (m) {
 							{ctor: '[]'}),
 						_1: {
 							ctor: '::',
-							_0: A2(
-								_user$project$View$generateButton,
-								_user$project$Types$Generate(_user$project$Types$CSV),
-								'Generate CSV'),
+							_0: _user$project$View$newThreat,
 							_1: {
 								ctor: '::',
-								_0: A2(
-									_user$project$View$generateButton,
-									_user$project$Types$Generate(_user$project$Types$JSON),
-									'Generate JSON'),
+								_0: _user$project$View$viewButtons,
 								_1: {
 									ctor: '::',
-									_0: A2(_user$project$View$generateButton, _user$project$Types$ResetSelections, 'Reset Selections'),
-									_1: {
-										ctor: '::',
-										_0: _elm_lang$html$Html$text(
-											A2(
-												_elm_lang$core$Basics_ops['++'],
-												'Status: >>',
-												A2(_elm_lang$core$Basics_ops['++'], m.status, '<<'))),
-										_1: {ctor: '[]'}
-									}
+									_0: _elm_lang$html$Html$text(
+										A2(
+											_elm_lang$core$Basics_ops['++'],
+											'Status: >>',
+											A2(_elm_lang$core$Basics_ops['++'], m.status, '<<'))),
+									_1: {ctor: '[]'}
 								}
 							}
 						}
@@ -12846,7 +12856,7 @@ var _user$project$Main$updateSubThreat = F2(
 			{threats: newthreats, status: status});
 	});
 var _user$project$Main$updateThreat = F3(
-	function (threatid, msg, model) {
+	function (threatid, text, model) {
 		var getSubThreat = F2(
 			function (model, threatfieldid) {
 				var threats = A2(
@@ -12863,7 +12873,7 @@ var _user$project$Main$updateThreat = F3(
 			return A2(
 				_user$project$Main$updateSubThreat,
 				model,
-				A2(_user$project$Threat$update, msg, _p2._0));
+				A3(_user$project$Threat$updateField, threatid, text, _p2._0));
 		} else {
 			return _elm_lang$core$Native_Utils.update(
 				model,
@@ -12941,7 +12951,7 @@ var _user$project$Main$update = F2(
 			case 'EditMsg':
 				return {
 					ctor: '_Tuple2',
-					_0: A3(_user$project$Main$updateThreat, _p4._0, msg, model),
+					_0: A3(_user$project$Main$updateThreat, _p4._0, _p4._1, model),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'DataReceived':

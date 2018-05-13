@@ -3,6 +3,7 @@ module Rest exposing (createErrorMessage, getJsonData, loadThreats)
 import Http
 import Json.Decode
 import Types exposing (..)
+import Threat exposing (..)
 
 
 threatbankurl : String

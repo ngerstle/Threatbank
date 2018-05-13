@@ -85,14 +85,13 @@ updateSubThreat model threatresult =
     { model | threats = newthreats, status = status }
 
 
-updateThreat : ThreatFieldId -> Msg -> Model -> Model
-updateThreat threatid msg model =
+updateThreat : ThreatFieldId -> String -> Model -> Model
+updateThreat threatid text model =
     let
         getSubThreat : Model -> ThreatFieldId -> Maybe Threat
         getSubThreat model threatfieldid =
             {- Gets a threat based on an EditField event -}
             let
-                --(id,_) = ef
                 threats =
                     List.filter (\x -> x.id == threatfieldid.id) model.threats
             in
@@ -103,7 +102,7 @@ updateThreat threatid msg model =
     in
     case threatToUpdate of
         Just actualthreat ->
-            updateSubThreat model (Threat.update msg actualthreat)
+            updateSubThreat model (Threat.updateField threatid text actualthreat)
 
         Nothing ->
             { model | status = "no threat by that id" }
@@ -169,8 +168,7 @@ update msg model =
             ( { model | status = "generate JSON" }, cmd )
 
         EditMsg threatfieldId txt ->
-            --{ model | status = "update threats" }
-            ( updateThreat threatfieldId msg model, Cmd.none )
+            ( updateThreat threatfieldId txt model, Cmd.none )
 
         DataReceived (Ok threats) ->
             let
