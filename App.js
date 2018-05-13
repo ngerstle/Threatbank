@@ -12436,28 +12436,6 @@ var _user$project$Rest$getJsonData = function () {
 	return A2(_elm_lang$http$Http$send, _user$project$Types$DataReceived, jsonRequest);
 }();
 
-var _user$project$View$dropDown = F4(
-	function (id, currentvalue, fieldname, values) {
-		var sfieldname = _elm_lang$core$Basics$toString(fieldname);
-		return A2(
-			_elm_lang$html$Html$div,
-			{
-				ctor: '::',
-				_0: _elm_lang$html$Html_Attributes$class('ThreatField'),
-				_1: {ctor: '[]'}
-			},
-			{
-				ctor: '::',
-				_0: _elm_lang$html$Html$text(
-					A2(_elm_lang$core$Basics_ops['++'], sfieldname, ': ')),
-				_1: {
-					ctor: '::',
-					_0: _elm_lang$html$Html$text(
-						_elm_lang$core$Basics$toString(currentvalue)),
-					_1: {ctor: '[]'}
-				}
-			});
-	});
 var _user$project$View$cssThreatCardSpacer = 'mdl-layout-spacer';
 var _user$project$View$cssThreatCardDescription = 'mdl-card__actions mdl-card--border';
 var _user$project$View$cssThreatCardCheckboxInput = 'mdl-checkbox__input';
@@ -12525,7 +12503,6 @@ var _user$project$View$viewThreatCard = function (threat) {
 		_user$project$Types$EditMsg,
 		A2(_user$project$Threat$ThreatFieldId, threat.id, _user$project$Threat$Selected),
 		'');
-	var iddropdown = _user$project$View$dropDown(threat.id);
 	var idtextfield = _user$project$View$textField(threat.id);
 	return A2(
 		_elm_lang$html$Html$div,
