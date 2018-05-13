@@ -1,11 +1,8 @@
 module Types exposing (..)
 
-import Threat
-
 import Http exposing (Error)
---import Json.Decode
---import Json.Decode.Pipeline
 import Json.Encode
+import Threat
 
 
 type alias Model =
@@ -13,7 +10,7 @@ type alias Model =
 
 
 type alias ViewModel =
-    { state : String }
+    { newThreatTitle : String, newThreatDescription : String }
 
 
 modelEncoder : Model -> Json.Encode.Value
@@ -44,5 +41,5 @@ type Msg
     | ResetSelections
     | EditMsg Threat.ThreatFieldId String
     | DataReceived (Result Http.Error JsonData)
-    | NewThreatMsg Model
-
+    | NewThreatMsg Threat.ThreatField String
+    | AddNewThreatMsg
