@@ -33,7 +33,6 @@ view m =
         , Html.div [ Html.Attributes.class "ThreatTable" ] subdivs
         , Html.br [] []
         , Html.br [] []
-
         , newThreat
         , viewButtons
         , Html.text ("Status: >>" ++ m.status ++ "<<")
@@ -42,9 +41,11 @@ view m =
 
 newThreat : Html.Html Msg
 newThreat =
-{- TODO add HTML, button to add a threat here... -}
+    {- TODO add HTML, button to add a threat here... -}
     Html.div []
-        [ Html.text "New threat field here"
+        [ Html.input [ Html.Attributes.type_ "text", Html.Attributes.placeholder "Title", Html.Events.onInput (NewThreatMsg Threat.Title) ] []
+        , Html.input [ Html.Attributes.type_ "text", Html.Attributes.placeholder "Description", Html.Events.onInput (NewThreatMsg Threat.Description) ] []
+        , generateButton AddNewThreatMsg "Add Threat"
         ]
 
 

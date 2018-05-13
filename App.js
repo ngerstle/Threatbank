@@ -12372,14 +12372,17 @@ var _user$project$Types$Model = F3(
 	function (a, b, c) {
 		return {threats: a, status: b, viewModel: c};
 	});
-var _user$project$Types$ViewModel = function (a) {
-	return {state: a};
-};
+var _user$project$Types$ViewModel = F2(
+	function (a, b) {
+		return {newThreatTitle: a, newThreatDescription: b};
+	});
 var _user$project$Types$JSON = {ctor: 'JSON'};
 var _user$project$Types$CSV = {ctor: 'CSV'};
-var _user$project$Types$NewThreatMsg = function (a) {
-	return {ctor: 'NewThreatMsg', _0: a};
-};
+var _user$project$Types$AddNewThreatMsg = {ctor: 'AddNewThreatMsg'};
+var _user$project$Types$NewThreatMsg = F2(
+	function (a, b) {
+		return {ctor: 'NewThreatMsg', _0: a, _1: b};
+	});
 var _user$project$Types$DataReceived = function (a) {
 	return {ctor: 'DataReceived', _0: a};
 };
@@ -12639,14 +12642,6 @@ var _user$project$View$viewThreatCard = function (threat) {
 			}
 		});
 };
-var _user$project$View$newThreat = A2(
-	_elm_lang$html$Html$div,
-	{ctor: '[]'},
-	{
-		ctor: '::',
-		_0: _elm_lang$html$Html$text('New threat field here'),
-		_1: {ctor: '[]'}
-	});
 var _user$project$View$generateButton = F2(
 	function (msg, text) {
 		return A2(
@@ -12676,6 +12671,54 @@ var _user$project$View$generateButton = F2(
 					}),
 				_1: {ctor: '[]'}
 			});
+	});
+var _user$project$View$newThreat = A2(
+	_elm_lang$html$Html$div,
+	{ctor: '[]'},
+	{
+		ctor: '::',
+		_0: A2(
+			_elm_lang$html$Html$input,
+			{
+				ctor: '::',
+				_0: _elm_lang$html$Html_Attributes$type_('text'),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$placeholder('Title'),
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$html$Html_Events$onInput(
+							_user$project$Types$NewThreatMsg(_user$project$Threat$Title)),
+						_1: {ctor: '[]'}
+					}
+				}
+			},
+			{ctor: '[]'}),
+		_1: {
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$input,
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html_Attributes$type_('text'),
+					_1: {
+						ctor: '::',
+						_0: _elm_lang$html$Html_Attributes$placeholder('Description'),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$html$Html_Events$onInput(
+								_user$project$Types$NewThreatMsg(_user$project$Threat$Description)),
+							_1: {ctor: '[]'}
+						}
+					}
+				},
+				{ctor: '[]'}),
+			_1: {
+				ctor: '::',
+				_0: A2(_user$project$View$generateButton, _user$project$Types$AddNewThreatMsg, 'Add Threat'),
+				_1: {ctor: '[]'}
+			}
+		}
 	});
 var _user$project$View$viewButtons = A2(
 	_elm_lang$html$Html$div,
@@ -12991,18 +13034,47 @@ var _user$project$Main$update = F2(
 						{status: 'threat selections cleared..'}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
-			default:
+			case 'NewThreatMsg':
+				var _p7 = _p4._1;
+				var oldviewModel = model.viewModel;
+				var newviewModel = function () {
+					var _p6 = _p4._0;
+					switch (_p6.ctor) {
+						case 'Title':
+							return _elm_lang$core$Native_Utils.update(
+								oldviewModel,
+								{newThreatTitle: _p7});
+						case 'Description':
+							return _elm_lang$core$Native_Utils.update(
+								oldviewModel,
+								{newThreatDescription: _p7});
+						default:
+							return oldviewModel;
+					}
+				}();
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{status: 'new threat msg not implemented'}),
+						{status: 'new threat msg not implemented', viewModel: newviewModel}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			default:
+				var newviewModel = A2(_user$project$Types$ViewModel, '', '');
+				var newThreat = A7(_user$project$Threat$Threat, -1, model.viewModel.newThreatTitle, model.viewModel.newThreatDescription, '', _user$project$Threat$High, _user$project$Threat$Miscellaneous, true);
+				var threatlist = _user$project$Main$setid(
+					{ctor: '::', _0: newThreat, _1: model.threats});
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{status: 'new threat added', threats: threatlist, viewModel: newviewModel}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 		}
 	});
 var _user$project$Main$init = function () {
-	var iviewmodel = _user$project$Types$ViewModel('');
+	var iviewmodel = A2(_user$project$Types$ViewModel, '', '');
 	var threats = _user$project$Rest$loadThreats('data');
 	var imodel = A3(_user$project$Types$Model, threats, 'initial model, predataload', iviewmodel);
 	return {ctor: '_Tuple2', _0: imodel, _1: _user$project$Rest$getJsonData};
@@ -13012,7 +13084,7 @@ var _user$project$Main$main = _elm_lang$html$Html$program(
 		init: _user$project$Main$init,
 		update: _user$project$Main$update,
 		view: _user$project$View$view,
-		subscriptions: function (_p6) {
+		subscriptions: function (_p8) {
 			return _elm_lang$core$Platform_Sub$none;
 		}
 	})();

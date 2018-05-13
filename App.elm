@@ -20,7 +20,7 @@ init =
             loadThreats "data"
 
         iviewmodel =
-            ViewModel ""
+            ViewModel "" ""
 
         imodel =
             Model threats "initial model, predataload" iviewmodel
@@ -204,8 +204,38 @@ update msg model =
             , Cmd.none
             )
 
-        NewThreatMsg _ ->
-            ( { model | status = "new threat msg not implemented" }, Cmd.none )
+        NewThreatMsg field text ->
+            let
+                oldviewModel =
+                    model.viewModel
+
+                newviewModel =
+                    case field of
+                        Threat.Title ->
+                            { oldviewModel | newThreatTitle = text }
+
+                        Threat.Description ->
+                            { oldviewModel | newThreatDescription = text }
+
+                        _ ->
+                            oldviewModel
+
+                --TODO only allowing edits of title and description at the moment. should add remediation, category, severity
+            in
+            ( { model | status = "new threat msg not implemented", viewModel = newviewModel }, Cmd.none )
+
+        AddNewThreatMsg ->
+            let
+                newThreat =
+                    Threat.Threat -1 model.viewModel.newThreatTitle model.viewModel.newThreatDescription "" Threat.High Threat.Miscellaneous True
+
+                newviewModel =
+                    ViewModel "" ""
+
+                threatlist =
+                    setid (newThreat :: model.threats)
+            in
+            ( { model | status = "new threat added", threats = threatlist, viewModel = newviewModel }, Cmd.none )
 
 
 main : Program Never Model Msg
