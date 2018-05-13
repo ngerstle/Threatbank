@@ -1,12 +1,14 @@
 module Main exposing (..)
 
+-- exposing (..)
+
 import Base64
 import Html
 import Json.Encode
 import List.Extra
 import Navigation
 import Rest exposing (..)
-import Threat exposing (..)
+import Threat
 import Types exposing (..)
 import View exposing (..)
 
@@ -64,7 +66,7 @@ validateModel m =
 -- could add which threats are invalid and why
 
 
-updateSubThreat : Model -> Result ( Threat, String ) Threat -> Model
+updateSubThreat : Model -> Result ( Threat.Threat, String ) Threat.Threat -> Model
 updateSubThreat model threatresult =
     {- Replaces an existing Threat with an updated Threat -}
     let
@@ -85,14 +87,13 @@ updateSubThreat model threatresult =
     { model | threats = newthreats, status = status }
 
 
-updateThreat : ThreatFieldId -> Msg -> Model -> Model
-updateThreat threatid msg model =
+updateThreat : Threat.ThreatFieldId -> String -> Model -> Model
+updateThreat threatid text model =
     let
-        getSubThreat : Model -> ThreatFieldId -> Maybe Threat
+        getSubThreat : Model -> Threat.ThreatFieldId -> Maybe Threat.Threat
         getSubThreat model threatfieldid =
             {- Gets a threat based on an EditField event -}
             let
-                --(id,_) = ef
                 threats =
                     List.filter (\x -> x.id == threatfieldid.id) model.threats
             in
@@ -103,13 +104,13 @@ updateThreat threatid msg model =
     in
     case threatToUpdate of
         Just actualthreat ->
-            updateSubThreat model (Threat.update msg actualthreat)
+            updateSubThreat model (Threat.updateField threatid text actualthreat)
 
         Nothing ->
             { model | status = "no threat by that id" }
 
 
-setid : List Threat -> List Threat
+setid : List Threat.Threat -> List Threat.Threat
 setid threatList =
     let
         maxid =
@@ -138,12 +139,11 @@ update msg model =
     case msg of
         Generate CSV ->
             let
-                -- cmd = Cmd.none
                 activeThreats =
                     List.filter .selected model.threats
 
                 rawpayload =
-                    exportThreatsCSV activeThreats
+                    Threat.exportThreatsCSV activeThreats
 
                 payload64 =
                     Base64.encode rawpayload
@@ -154,9 +154,7 @@ update msg model =
             ( { model | status = "generate CSV file" }, cmd )
 
         Generate JSON ->
-            --TODO redirect to dataurl with json
             let
-                -- cmd = Cmd.none
                 rawpayload =
                     Json.Encode.encode 2 (modelEncoder model)
 
@@ -169,8 +167,7 @@ update msg model =
             ( { model | status = "generate JSON" }, cmd )
 
         EditMsg threatfieldId txt ->
-            --{ model | status = "update threats" }
-            ( updateThreat threatfieldId msg model, Cmd.none )
+            ( updateThreat threatfieldId txt model, Cmd.none )
 
         DataReceived (Ok threats) ->
             let

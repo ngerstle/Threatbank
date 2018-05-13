@@ -4,10 +4,8 @@ import Html
 import Html.Attributes
 import Html.Events
 import Json.Decode
+import Threat
 import Types exposing (..)
-
-
---import Threat exposing (..)
 
 
 generateButton : Msg -> String -> Html.Html Msg
@@ -36,11 +34,26 @@ view m =
         , Html.br [] []
         , Html.br [] []
 
-        --TODO , Html.div [addRow] -- option to add a threat
-        , generateButton (Generate CSV) "Generate CSV"
+        , newThreat
+        , viewButtons
+        , Html.text ("Status: >>" ++ m.status ++ "<<")
+        ]
+
+
+newThreat : Html.Html Msg
+newThreat =
+{- TODO add HTML, button to add a threat here... -}
+    Html.div []
+        [ Html.text "New threat field here"
+        ]
+
+
+viewButtons : Html.Html Msg
+viewButtons =
+    Html.div []
+        [ generateButton (Generate CSV) "Generate CSV"
         , generateButton (Generate JSON) "Generate JSON"
         , generateButton ResetSelections "Reset Selections"
-        , Html.text ("Status: >>" ++ m.status ++ "<<")
         ]
 
 
@@ -51,8 +64,8 @@ onBlurWithTargetValue tagger =
 
 
 textField :
-    ID
-    -> ThreatField
+    Threat.ID
+    -> Threat.ThreatField
     -> String
     -> Html.Html Msg
 textField id fieldname text =
@@ -61,7 +74,7 @@ textField id fieldname text =
             toString fieldname
 
         tfid =
-            ThreatFieldId id fieldname
+            Threat.ThreatFieldId id fieldname
 
         msg =
             EditMsg tfid
@@ -132,18 +145,15 @@ cssThreatCardSpacer =
     "mdl-layout-spacer"
 
 
-viewThreatCard : Threat -> Html.Html Msg
+viewThreatCard : Threat.Threat -> Html.Html Msg
 viewThreatCard threat =
     let
         idtextfield =
             textField threat.id
 
-        iddropdown =
-            dropDown threat.id
-
         selectedMsg : Msg
         selectedMsg =
-            EditMsg (ThreatFieldId threat.id Selected) ""
+            EditMsg (Threat.ThreatFieldId threat.id Threat.Selected) ""
     in
     Html.div []
         [ Html.br [] []
@@ -170,24 +180,4 @@ viewThreatCard threat =
                 , Html.div [ Html.Attributes.class cssThreatCardSpacer ] []
                 ]
             ]
-        ]
-
-
-dropDown :
-    ID
-    -> ThreatField
-    -> String
-    -> List String
-    -> Html.Html Msg
-dropDown id currentvalue fieldname values =
-    let
-        sfieldname =
-            toString fieldname
-    in
-    {- TODO drop down elements for enum value fields -}
-    Html.div [ Html.Attributes.class "ThreatField" ]
-        [ Html.text (sfieldname ++ ": ")
-
-        --, Html.text "NOT IMPLEMENTED"
-        , Html.text (toString currentvalue)
         ]
